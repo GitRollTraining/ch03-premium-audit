@@ -1,0 +1,41 @@
+{
+  "fieldBusiness": true,
+  "duties": {
+    "PE-E01": {
+      "work": "electrical",
+      "basis": "business-description.md establishes electrical wiring; field-notes.md says the included owner leads a site crew and pulls wire, with electricians on out-of-town jobs."
+    },
+    "PE-E02": {
+      "work": "electrical",
+      "basis": "business-description.md establishes electrical wiring; field-notes.md says the included owner leads a site crew and pulls wire, with electricians on out-of-town jobs."
+    },
+    "PE-E03": {
+      "work": "electrical",
+      "basis": "business-description.md establishes electrical wiring; field-notes.md says the included owner leads a site crew and pulls wire, with electricians on out-of-town jobs."
+    },
+    "PE-E04": {
+      "work": "electrical",
+      "basis": "business-description.md establishes electrical wiring; field-notes.md says the included owner leads a site crew and pulls wire, with electricians on out-of-town jobs."
+    },
+    "PE-E05": {
+      "work": "electrical",
+      "basis": "business-description.md establishes electrical wiring; field-notes.md says the included owner leads a site crew and pulls wire, with electricians on out-of-town jobs."
+    },
+    "PE-E06": {
+      "work": "electrical",
+      "basis": "business-description.md establishes electrical wiring; field-notes.md says the included owner leads a site crew and pulls wire, with electricians on out-of-town jobs."
+    },
+    "PE-E07": {
+      "work": "office",
+      "basis": "field-notes.md explicitly states the administrator runs the office and never visits jobs."
+    }
+  },
+  "sourceHashes": {
+    "site-signin-log.csv": "49e585c8512862c1959eefb431419d416e3bf236f0b4004347a4e7bfcc1195b6",
+    "payroll-register.csv": "1dd09ea917394706df1c0166ba3869cdb20820b0e7605c500d0a11d3f6263e71",
+    "field-notes.md": "6055df5e294c902b884ece23e30a9b424f3f1df801e5c97c39eb12b93453d72e",
+    "business-description.md": "ab025cd6d057708188e0060ef2309e64e990cdbbb25e4fe97402af6cf5434bfd",
+    "application.md": "55f0c7b086ac550f0f8b98a9d22aa906ffe4005e2c8259fd5d9fe72e2d2bd07e"
+  },
+  "callReason": "Included owner field duties and daily allowances contradict office classification and blanket travel exclusion; the zero-day allowance is unresolved."
+}

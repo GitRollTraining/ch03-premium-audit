@@ -1,0 +1,38 @@
+{
+  "fieldBusiness": true,
+  "duties": {
+    "AC-E01": {
+      "work": "delivery",
+      "basis": "business-description.md identifies three delivery van routes; route-log.csv identifies actual drivers."
+    },
+    "AC-E02": {
+      "work": "delivery",
+      "basis": "business-description.md identifies three delivery van routes; route-log.csv identifies actual drivers."
+    },
+    "AC-E03": {
+      "work": "delivery",
+      "basis": "business-description.md identifies three delivery van routes; route-log.csv identifies actual drivers."
+    },
+    "AC-E04": {
+      "work": "office",
+      "basis": "field-notes.md observes dispatch work and a dispatcher riding a van; route-log.csv determines actual ride-along activity; payroll-register.csv and business description identify bookkeeping."
+    },
+    "AC-E05": {
+      "work": "office",
+      "basis": "field-notes.md observes dispatch work and a dispatcher riding a van; route-log.csv determines actual ride-along activity; payroll-register.csv and business description identify bookkeeping."
+    },
+    "AC-E06": {
+      "work": "office",
+      "basis": "field-notes.md observes dispatch work and a dispatcher riding a van; route-log.csv determines actual ride-along activity; payroll-register.csv and business description identify bookkeeping."
+    }
+  },
+  "sourceHashes": {
+    "route-log.csv": "b7a8a9584ee7a4df25a6506f4473cbb6f52189b4b8ccc628bf442457b0400189",
+    "weekly-payroll.csv": "3e23df9b8139a36585e96760027d6d8d3117aa441f416431a71679e8f3ad5782",
+    "payroll-register.csv": "5d88008ff2ce2ea367a89e95bdd81f38cc14d210ee15fd1556ec37fb6493930b",
+    "field-notes.md": "38916588e94bb87cb17a4c4e8988515c505c53f943287d2c17e55a13efd8dc84",
+    "business-description.md": "89ca4f6f3f3944fd1642514c9f7991e5943b8f013ab6e293ac8b4af562aca220",
+    "application.md": "8f3c3326bf18874c1c43cfaf60312f5b3ada13ad29a885c5a49f5418afc5b21b"
+  },
+  "callReason": "Recurring dispatcher ride-alongs contradict the office-only treatment. Exact duty hours are absent, so whole-pay vehicle-helper classification remains a proposed treatment requiring approval."
+}

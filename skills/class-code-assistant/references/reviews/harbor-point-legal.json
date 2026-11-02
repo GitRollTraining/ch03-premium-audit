@@ -1,0 +1,33 @@
+{
+  "fieldBusiness": false,
+  "duties": {
+    "HP-E01": {
+      "work": "office",
+      "basis": "field-notes.md states no physical work outside the office and distinguishes court/closings from job sites; business-description.md establishes legal practice."
+    },
+    "HP-E02": {
+      "work": "office",
+      "basis": "field-notes.md states no physical work outside the office and distinguishes court/closings from job sites; business-description.md establishes legal practice."
+    },
+    "HP-E03": {
+      "work": "office",
+      "basis": "field-notes.md states no physical work outside the office and distinguishes court/closings from job sites; business-description.md establishes legal practice."
+    },
+    "HP-E04": {
+      "work": "office",
+      "basis": "field-notes.md states no physical work outside the office and distinguishes court/closings from job sites; business-description.md establishes legal practice."
+    },
+    "HP-E05": {
+      "work": "office",
+      "basis": "field-notes.md states no physical work outside the office and distinguishes court/closings from job sites; business-description.md establishes legal practice."
+    }
+  },
+  "sourceHashes": {
+    "site-signin-log.csv": "27674afc3b226422543bc722a1148791f9f5a54e063acb9bf46af6a46f6fe461",
+    "payroll-register.csv": "d7473ff1ddf6a2d2dbd4a09925d0cd3afbdf8ca5ad4e59d0d0c4755fd01f60bb",
+    "field-notes.md": "79182f054841680bbd9878653043af29b0c10f4d866cc2339a62572cd9f69cee",
+    "business-description.md": "e2836b532e7aae28f3a9d2bf755f57240dcfefeb7ccb9a81302c6403277ecf20",
+    "application.md": "bfe89a3e1b01cceda79c992cda0e9fae9aef9148311b0d353bff4fb4fa1d18f1"
+  },
+  "callReason": "The log/office-duty conflict needs clarification, but no supported governing field code exists."
+}

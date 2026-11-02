@@ -1,0 +1,227 @@
+{
+  "rootUrl": "https://drive.google.com/drive/folders/1pt8gzX8HDuaAq6g8ZFeQ66zbVIYdlN_n",
+  "guide": {
+    "id": "1L5MxLny7erhjSwCvl43DTSmAt3wgv22j",
+    "url": "https://drive.google.com/file/d/1L5MxLny7erhjSwCvl43DTSmAt3wgv22j/view",
+    "title": "classification-guide.md",
+    "sha256": "89480f691737a0e8a762a836b8412476e0ed9d0b37639eb898e2826771c1dba8"
+  },
+  "employers": [
+    {
+      "slug": "severn-homebuilders",
+      "url": "https://drive.google.com/drive/folders/1F_v7eGyTBqRAmvmjLWz9iCZMCwZKH-fi",
+      "files": [
+        {
+          "id": "1aGYgGe_OuDtWqNxLrkwuPSFCnsiVN3zw",
+          "name": "subcontractor-payments.csv",
+          "url": "https://drive.google.com/file/d/1aGYgGe_OuDtWqNxLrkwuPSFCnsiVN3zw/view?usp=drivesdk"
+        },
+        {
+          "id": "1kKrXNEVrrbAhcXcZltxfiagYqN-5g8WE",
+          "name": "site-signin-log.csv",
+          "url": "https://drive.google.com/file/d/1kKrXNEVrrbAhcXcZltxfiagYqN-5g8WE/view?usp=drivesdk"
+        },
+        {
+          "id": "1aSBzZCWLFZJUTvLkz0hDPqk-flSWwOpU",
+          "name": "payroll-register.csv",
+          "url": "https://drive.google.com/file/d/1aSBzZCWLFZJUTvLkz0hDPqk-flSWwOpU/view?usp=drivesdk"
+        },
+        {
+          "id": "1_oolMVpZAkbDIGqkMDxreysfcQR-nlJN",
+          "name": "insurance-certificates.csv",
+          "url": "https://drive.google.com/file/d/1_oolMVpZAkbDIGqkMDxreysfcQR-nlJN/view?usp=drivesdk"
+        },
+        {
+          "id": "1t04ez9kiXyK7cCaGIBAMi-DVUvML8OID",
+          "name": "field-notes.md",
+          "url": "https://drive.google.com/file/d/1t04ez9kiXyK7cCaGIBAMi-DVUvML8OID/view?usp=drivesdk"
+        },
+        {
+          "id": "1roIR4kXhtGFaas5i2dmIdLY62LxF0tVy",
+          "name": "business-description.md",
+          "url": "https://drive.google.com/file/d/1roIR4kXhtGFaas5i2dmIdLY62LxF0tVy/view?usp=drivesdk"
+        },
+        {
+          "id": "1xgtCvPL9ke2MMfS3Q3_WnKQCi50Q0PJD",
+          "name": "application.md",
+          "url": "https://drive.google.com/file/d/1xgtCvPL9ke2MMfS3Q3_WnKQCi50Q0PJD/view?usp=drivesdk"
+        }
+      ],
+      "review": "reviews/severn-homebuilders.json"
+    },
+    {
+      "slug": "patuxent-electric",
+      "url": "https://drive.google.com/drive/folders/1IuJVQVQkrkrbuHClBxWkDpPi8hh9_-sG",
+      "files": [
+        {
+          "id": "1zzZY5CVt3pokymdMxhrY-h3KoW2ccvar",
+          "name": "site-signin-log.csv",
+          "url": "https://drive.google.com/file/d/1zzZY5CVt3pokymdMxhrY-h3KoW2ccvar/view?usp=drivesdk"
+        },
+        {
+          "id": "1rpnsNOubZb5fCpElBk8wPAU5lf8LqT6S",
+          "name": "payroll-register.csv",
+          "url": "https://drive.google.com/file/d/1rpnsNOubZb5fCpElBk8wPAU5lf8LqT6S/view?usp=drivesdk"
+        },
+        {
+          "id": "1ffTc3p664aUqgxSYHxAHXLHj0wGkemBh",
+          "name": "field-notes.md",
+          "url": "https://drive.google.com/file/d/1ffTc3p664aUqgxSYHxAHXLHj0wGkemBh/view?usp=drivesdk"
+        },
+        {
+          "id": "1rlhBvA_oIrQZx4W0yUpHC5Fhp39dSZYA",
+          "name": "business-description.md",
+          "url": "https://drive.google.com/file/d/1rlhBvA_oIrQZx4W0yUpHC5Fhp39dSZYA/view?usp=drivesdk"
+        },
+        {
+          "id": "1PeZVBAsMdsAHNreQLoFBrhJ3L2f3ro9O",
+          "name": "application.md",
+          "url": "https://drive.google.com/file/d/1PeZVBAsMdsAHNreQLoFBrhJ3L2f3ro9O/view?usp=drivesdk"
+        }
+      ],
+      "review": "reviews/patuxent-electric.json"
+    },
+    {
+      "slug": "larkspur-lane-bistro",
+      "url": "https://drive.google.com/drive/folders/1cGmS-J2zAC-nOvono08D0W-23xH1K8Zr",
+      "files": [
+        {
+          "id": "1RweuVXBFLbhY1-d6ztTbrBBI3hsbg2AL",
+          "name": "payroll-register.csv",
+          "url": "https://drive.google.com/file/d/1RweuVXBFLbhY1-d6ztTbrBBI3hsbg2AL/view?usp=drivesdk"
+        },
+        {
+          "id": "1XvNTJ1snLoBgwjNLFAKsW4m8ZeNbL4oV",
+          "name": "gross-receipts.csv",
+          "url": "https://drive.google.com/file/d/1XvNTJ1snLoBgwjNLFAKsW4m8ZeNbL4oV/view?usp=drivesdk"
+        },
+        {
+          "id": "1gryH8fMXpdLz7m3wfIqt3rP4TBna-10B",
+          "name": "field-notes.md",
+          "url": "https://drive.google.com/file/d/1gryH8fMXpdLz7m3wfIqt3rP4TBna-10B/view?usp=drivesdk"
+        },
+        {
+          "id": "1soA8l52GMsdnLnxg9a0vbZi3OGw83soJ",
+          "name": "business-description.md",
+          "url": "https://drive.google.com/file/d/1soA8l52GMsdnLnxg9a0vbZi3OGw83soJ/view?usp=drivesdk"
+        },
+        {
+          "id": "1Q1tKM5Hx3KvkZOyP-clxI0vpmB5_cFP_",
+          "name": "application.md",
+          "url": "https://drive.google.com/file/d/1Q1tKM5Hx3KvkZOyP-clxI0vpmB5_cFP_/view?usp=drivesdk"
+        }
+      ],
+      "review": "reviews/larkspur-lane-bistro.json"
+    },
+    {
+      "slug": "harbor-point-legal",
+      "url": "https://drive.google.com/drive/folders/1XcPXqwGvBmVSptPmG0kkAmOzXtLDx_GB",
+      "files": [
+        {
+          "id": "1XYS_ajsSQMqxqgKLGtI8t9yZE3d4BSAp",
+          "name": "site-signin-log.csv",
+          "url": "https://drive.google.com/file/d/1XYS_ajsSQMqxqgKLGtI8t9yZE3d4BSAp/view?usp=drivesdk"
+        },
+        {
+          "id": "13UaL8k95JkOjoi18ySAZoU5T5qaGb6sF",
+          "name": "payroll-register.csv",
+          "url": "https://drive.google.com/file/d/13UaL8k95JkOjoi18ySAZoU5T5qaGb6sF/view?usp=drivesdk"
+        },
+        {
+          "id": "13LHYTQQPRLHv41732VtJ_wlPP-_d9sPM",
+          "name": "field-notes.md",
+          "url": "https://drive.google.com/file/d/13LHYTQQPRLHv41732VtJ_wlPP-_d9sPM/view?usp=drivesdk"
+        },
+        {
+          "id": "1mjpCGvogGUDfL-Jbo1bQhZZ1R6qtV4p7",
+          "name": "business-description.md",
+          "url": "https://drive.google.com/file/d/1mjpCGvogGUDfL-Jbo1bQhZZ1R6qtV4p7/view?usp=drivesdk"
+        },
+        {
+          "id": "1CpRtyJghao9DSkFNbhLVaRHIwFiuI_ai",
+          "name": "application.md",
+          "url": "https://drive.google.com/file/d/1CpRtyJghao9DSkFNbhLVaRHIwFiuI_ai/view?usp=drivesdk"
+        }
+      ],
+      "review": "reviews/harbor-point-legal.json"
+    },
+    {
+      "slug": "bay-crest-exteriors",
+      "url": "https://drive.google.com/drive/folders/1TEnHabH4J1eFCPZXY1PcybPVN5BxqSxk",
+      "files": [
+        {
+          "id": "1JmQFTWBYEeGW0nqiVHn8VqVUaDqym2MG",
+          "name": "crew-timesheets.csv",
+          "url": "https://drive.google.com/file/d/1JmQFTWBYEeGW0nqiVHn8VqVUaDqym2MG/view?usp=drivesdk"
+        },
+        {
+          "id": "1MATgZl09ZeMk91mLBl8Y9TfDLEsGZxYE",
+          "name": "site-signin-log.csv",
+          "url": "https://drive.google.com/file/d/1MATgZl09ZeMk91mLBl8Y9TfDLEsGZxYE/view?usp=drivesdk"
+        },
+        {
+          "id": "1LNA3cclH6SaZDCWRljlZYnpFTnsPdkox",
+          "name": "payroll-register.csv",
+          "url": "https://drive.google.com/file/d/1LNA3cclH6SaZDCWRljlZYnpFTnsPdkox/view?usp=drivesdk"
+        },
+        {
+          "id": "10VpsaBvK25j7W8CuwW5jVOR0BCQG5pqB",
+          "name": "field-notes.md",
+          "url": "https://drive.google.com/file/d/10VpsaBvK25j7W8CuwW5jVOR0BCQG5pqB/view?usp=drivesdk"
+        },
+        {
+          "id": "1SHcro76JYUSRvD3OocHDwJh8DbsDEU29",
+          "name": "business-description.md",
+          "url": "https://drive.google.com/file/d/1SHcro76JYUSRvD3OocHDwJh8DbsDEU29/view?usp=drivesdk"
+        },
+        {
+          "id": "1vNdqk0QSSVsSBTJY2aAVJSWkh6XTw8-M",
+          "name": "application.md",
+          "url": "https://drive.google.com/file/d/1vNdqk0QSSVsSBTJY2aAVJSWkh6XTw8-M/view?usp=drivesdk"
+        }
+      ],
+      "review": "reviews/bay-crest-exteriors.json"
+    },
+    {
+      "slug": "annapolis-courier",
+      "url": "https://drive.google.com/drive/folders/1PGc2b6QTrQ8xRkPqUeQ9aWkR1j6J3QPP",
+      "files": [
+        {
+          "id": "19UX2yawPRLp6wr2PLCK1-PqviXtI4Btu",
+          "name": "route-log.csv",
+          "url": "https://drive.google.com/file/d/19UX2yawPRLp6wr2PLCK1-PqviXtI4Btu/view?usp=drivesdk"
+        },
+        {
+          "id": "1CGWUkMjRyosKXQguk9Wb6F1ngaGtlKpi",
+          "name": "weekly-payroll.csv",
+          "url": "https://drive.google.com/file/d/1CGWUkMjRyosKXQguk9Wb6F1ngaGtlKpi/view?usp=drivesdk"
+        },
+        {
+          "id": "1eJgq7W9-XcwBIaIddXIHwKg1yNd-3dFD",
+          "name": "payroll-register.csv",
+          "url": "https://drive.google.com/file/d/1eJgq7W9-XcwBIaIddXIHwKg1yNd-3dFD/view?usp=drivesdk"
+        },
+        {
+          "id": "1eSt_14PU6n8daKBY6dXqzmGW7Ny1mozi",
+          "name": "field-notes.md",
+          "url": "https://drive.google.com/file/d/1eSt_14PU6n8daKBY6dXqzmGW7Ny1mozi/view?usp=drivesdk"
+        },
+        {
+          "id": "1O_EdWsI1LkifqGFAmB227iFlfXjSHu0T",
+          "name": "business-description.md",
+          "url": "https://drive.google.com/file/d/1O_EdWsI1LkifqGFAmB227iFlfXjSHu0T/view?usp=drivesdk"
+        },
+        {
+          "id": "1_QqnLoaf3ceKMMJMT2jw5ABHV3kgSIBJ",
+          "name": "application.md",
+          "url": "https://drive.google.com/file/d/1_QqnLoaf3ceKMMJMT2jw5ABHV3kgSIBJ/view?usp=drivesdk"
+        }
+      ],
+      "review": "reviews/annapolis-courier.json"
+    }
+  ],
+  "interview": {
+    "path": "interviews/ch03-premium-audit-20261102-1605.md",
+    "sha256": "5c550c09cc68f56bf3890f604b824b774169c1cefbc2a45ad54cc3ea7fcd9550"
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "fieldBusiness": false,
+  "duties": {
+    "LL-E01": {
+      "work": "restaurant",
+      "basis": "business-description.md establishes restaurant meal preparation/service; field-notes.md confirms kitchen and dining room."
+    },
+    "LL-E02": {
+      "work": "restaurant",
+      "basis": "business-description.md establishes restaurant meal preparation/service; field-notes.md confirms kitchen and dining room."
+    },
+    "LL-E03": {
+      "work": "restaurant",
+      "basis": "business-description.md establishes restaurant meal preparation/service; field-notes.md confirms kitchen and dining room."
+    },
+    "LL-E04": {
+      "work": "restaurant",
+      "basis": "business-description.md establishes restaurant meal preparation/service; field-notes.md confirms kitchen and dining room."
+    },
+    "LL-E05": {
+      "work": "restaurant",
+      "basis": "business-description.md establishes restaurant meal preparation/service; field-notes.md confirms kitchen and dining room."
+    },
+    "LL-E06": {
+      "work": "restaurant",
+      "basis": "business-description.md establishes restaurant meal preparation/service; field-notes.md confirms kitchen and dining room."
+    },
+    "LL-E07": {
+      "work": "catering",
+      "basis": "field-notes.md describes the catering lead and two event crew members preparing event food and serving off-site, with restaurant shifts during quiet weeks."
+    },
+    "LL-E08": {
+      "work": "catering",
+      "basis": "field-notes.md describes the catering lead and two event crew members preparing event food and serving off-site, with restaurant shifts during quiet weeks."
+    },
+    "LL-E09": {
+      "work": "catering",
+      "basis": "field-notes.md describes the catering lead and two event crew members preparing event food and serving off-site, with restaurant shifts during quiet weeks."
+    }
+  },
+  "sourceHashes": {
+    "payroll-register.csv": "2190e692efc90ec036d6b69ee51726ca37d5ada823148c928e55396c0f188ecf",
+    "gross-receipts.csv": "66f5e8a17bfe7cc4b0f4c36029859d4d20fa25ac64df3b426ccefb0471186d55",
+    "field-notes.md": "d7df20e3f376bd598149a7d0394a4a55dd898caaeb1cb1c9d73b2cf76b0f782c",
+    "business-description.md": "296ef9224ae172d208941e67f6ba83bfa5ab049c46117acb56873bf56e707e5e",
+    "application.md": "e80ab8ffeb32d9208515da8f8671416f0897a71d83f6f6f223dd54e62486df7b"
+  },
+  "callReason": "Application treats catering duties as sufficient for F-720; the interview adds an employer receipts threshold, and the supplied receipt window needs confirmation."
+}

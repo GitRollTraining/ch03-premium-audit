@@ -1,0 +1,58 @@
+{
+  "fieldBusiness": true,
+  "duties": {
+    "SH-E01": {
+      "work": "residential",
+      "basis": "business-description.md identifies framing, drywall, finish carpentry and site labor by the own crew; field-notes.md confirms active construction sites."
+    },
+    "SH-E02": {
+      "work": "residential",
+      "basis": "business-description.md identifies framing, drywall, finish carpentry and site labor by the own crew; field-notes.md confirms active construction sites."
+    },
+    "SH-E03": {
+      "work": "residential",
+      "basis": "business-description.md identifies framing, drywall, finish carpentry and site labor by the own crew; field-notes.md confirms active construction sites."
+    },
+    "SH-E04": {
+      "work": "residential",
+      "basis": "business-description.md identifies framing, drywall, finish carpentry and site labor by the own crew; field-notes.md confirms active construction sites."
+    },
+    "SH-E05": {
+      "work": "residential",
+      "basis": "business-description.md identifies framing, drywall, finish carpentry and site labor by the own crew; field-notes.md confirms active construction sites."
+    },
+    "SH-E06": {
+      "work": "office",
+      "basis": "field-notes.md describes estimator visits, office-manager site errands/inspector meetings and office-only bookkeeping; site-signin-log.csv determines visit dates."
+    },
+    "SH-E07": {
+      "work": "office",
+      "basis": "field-notes.md describes estimator visits, office-manager site errands/inspector meetings and office-only bookkeeping; site-signin-log.csv determines visit dates."
+    },
+    "SH-E08": {
+      "work": "office",
+      "basis": "field-notes.md describes estimator visits, office-manager site errands/inspector meetings and office-only bookkeeping; site-signin-log.csv determines visit dates."
+    }
+  },
+  "sourceHashes": {
+    "subcontractor-payments.csv": "114f76a91a9a66ea0c1fee4f8c19e268ada6119f18d4ec561d6a168833d4c516",
+    "site-signin-log.csv": "9ae36a9e35bb64f9ccbecb9321c0fddf9f721ff1cfce7633bc5f45f00e9937f7",
+    "payroll-register.csv": "4536004d11a63f4e733a37905ab9201f021ee34a05982405dd7f8f48a81bd075",
+    "insurance-certificates.csv": "77ff18a72e35e9326e752e14d09aa5a8db63fd923d13afb107c06970ee489909",
+    "field-notes.md": "1460d5cc05dc487d80bb2c382152dad609baf45cc24bec77035cf00359e5be6d",
+    "business-description.md": "7404b81d9cb83a1256a2e25299a5f9197a41f0f170236ac7633dc5f98692e9f5",
+    "application.md": "ee9aa45fe1247743dd9da4c6e7693dd8151630e98653fd944acdb817ff4b25ed"
+  },
+  "callReason": "Office-manager site duties contradict the clerical application; uninsured or incompletely documented subcontractors add payroll. Obtain full-period coverage and verify subcontractor identities.",
+  "tradeCodes": {
+    "framing": "H-420",
+    "drywall": "H-420",
+    "roofing": "R-310"
+  },
+  "subcontractorAliases": {
+    "Kent Island Roofing": "Kent Island Roofing & Siding LLC"
+  },
+  "openItems": [
+    "OPEN: Kent Island Roofing in subcontractor-payments.csv is provisionally associated with Kent Island Roofing & Siding LLC in insurance-certificates.csv; confirm the legal entity. The listed coverage ends 2026-01-31 and does not span the audit period. No Tidewater Drywall certificate is listed."
+  ]
+}
