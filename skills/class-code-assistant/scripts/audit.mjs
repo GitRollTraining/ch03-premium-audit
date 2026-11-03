@@ -53,39 +53,117 @@ function period(text) {
 function checkDate(date,start,end) { if(!/^\d{4}-\d{2}-\d{2}$/.test(date)||date<start||date>end)throw Error(`Record outside audit period: ${date}`); }
 const sum = values => values.reduce((a,b)=>a+b,0);
 
+function reportingMonths(first,last) {
+  const month=/^\d{4}-(0[1-9]|1[0-2])$/;
+  if(!month.test(first)||!month.test(last)||first>last)throw Error('Invalid receipt reporting window');
+  const index=s=>Number(s.slice(0,4))*12+Number(s.slice(5))-1;
+  const from=index(first),to=index(last);
+  if(to-from>1200)throw Error('Receipt reporting window exceeds 100 years');
+  return Array.from({length:to-from+1},(_,i)=>`${Math.floor((from+i)/12)}-${String((from+i)%12+1).padStart(2,'0')}`);
+}
+
+// Unknown evidence is distinct from evidence that the threshold is not met.
+function assessReceipts(text,start,end,window) {
+  try {
+    if(text===undefined || !text.trim())throw Error('missing or empty source');
+    const receipts=csv(text);
+    if(!receipts.length)throw Error('no monthly receipt records');
+    if(window && !(typeof window.basis==='string' && window.basis.trim()))throw Error('reporting window lacks a reviewed source basis');
+    const first=window?window.startMonth:start.slice(0,7),last=window?window.endMonth:end.slice(0,7);
+    const expected=reportingMonths(first,last),seen=new Set();
+    let off=0,total=0;
+    for(const r of receipts) {
+      if(!expected.includes(r.month))throw Error(`unexpected or invalid month ${r.month}`);
+      if(seen.has(r.month))throw Error(`duplicate month ${r.month}`);
+      seen.add(r.month);
+      const catering=cents(r.offsite_catering_receipts),dining=cents(r.dine_in_receipts);
+      off+=catering;total+=catering+dining;
+    }
+    const missing=expected.filter(m=>!seen.has(m));
+    if(missing.length)throw Error(`missing months ${missing.join(', ')}`);
+    if(!total)throw Error('zero total receipts; threshold denominator is unknown');
+    return {met:off*100>=total*40,off,total,first,last};
+  } catch(error) {
+    return {met:null,problem:`UNKNOWN: gross-receipts.csv cannot establish the 40% threshold: ${error.message}. Obtain complete monthly dining and off-site catering receipts for the documented reporting window and confirm audit-period applicability.`};
+  }
+}
+
+function unmatchedLogIds(sites,routes,times,ids,visitors=[]) {
+  const issues=[];
+  const sources=[
+    {name:'site-signin-log.csv',rows:sites,fields:[{key:'employee_id',visitor:true,nameKey:'name'}]},
+    {name:'route-log.csv',rows:routes,fields:[{key:'driver_id'},{key:'ride_along_id',optional:true,visitor:true,nameKey:'ride_along_name'}]},
+    {name:'crew-timesheets.csv',rows:times,fields:[{key:'employee_id'}]}
+  ];
+  for(const source of sources)source.rows.forEach((r,index)=>{
+    for(const field of source.fields) {
+      const id=r[field.key]??'';
+      if(ids.has(id) || (field.optional && !id && !r[field.nameKey]?.trim()))continue;
+      const documented=field.visitor && visitors.some(v=>v.source===source.name && v.field===field.key &&
+        typeof v.basis==='string' && v.basis.trim() && (v.id || v.name) &&
+        (v.id??'')===id && (!v.name || v.name===r[field.nameKey]));
+      if(documented)continue;
+      issues.push(`OPEN: ${source.name} row ${index+2}, ${r.date}, ${field.key} ${id||'[missing ID]'}${r[field.nameKey]?' ('+r[field.nameKey]+')':''} is not reconciled to payroll-register.csv. Confirm this person's identity, employee/subcontractor/visitor status and whether payroll or supporting records are missing.`);
+    }
+  });
+  return issues;
+}
+
 // Semantic facts are reviewed against live evidence, never inferred from titles here.
 export function classify({slug,documents,review,guide}) {
   const get = name => {if(documents[name]===undefined)throw Error(`${slug}: missing ${name}`);return documents[name];};
-  for(const [name,hash] of Object.entries(review.sourceHashes))if(sha(get(name))!==hash)throw Error(`${slug}: ${name} changed; review facts before rerunning`);
-  if(Object.keys(documents).some(n=>!review.sourceHashes[n]))throw Error(`${slug}: unreviewed source document`);
   const [start,end]=period(get('business-description.md'));
+  const operations=review.cateringOperations;
+  if(operations && (typeof operations.thresholdRelevant!=='boolean'||typeof operations.basis!=='string'||!operations.basis.trim()))throw Error('Catering operations review requires thresholdRelevant and a source-grounded basis');
+  // A source mention is an evidence dependency, not an inferred employee duty/code.
+  // A reviewed negative operations fact may resolve incidental/negative mentions.
+  const mentionsCatering=['business-description.md','field-notes.md','application.md'].some(name=>/\b(?:cater(?:ing|er|ers|s)?|F-720)\b/i.test(documents[name]||''));
+  const needsReceipts=Object.values(review.duties).some(d=>d.work==='catering') ||
+    Object.hasOwn(documents,'gross-receipts.csv') || Object.hasOwn(review.sourceHashes,'gross-receipts.csv') ||
+    !!review.receiptWindow || operations?.thresholdRelevant===true ||
+    (mentionsCatering && operations?.thresholdRelevant!==false);
+  const receiptEvidence=needsReceipts?assessReceipts(documents['gross-receipts.csv'],start,end,review.receiptWindow):null;
+  for(const [name,hash] of Object.entries(review.sourceHashes)) {
+    // Invalid/missing receipt evidence may only create an unknown threshold, never an allocation.
+    // Complete but changed sources still require explicit review before their figures are used.
+    if(name==='gross-receipts.csv' && receiptEvidence?.met===null)continue;
+    if(sha(get(name))!==hash)throw Error(`${slug}: ${name} changed; review facts before rerunning`);
+  }
+  if(Object.keys(documents).some(n=>!review.sourceHashes[n]))throw Error(`${slug}: unreviewed source document`);
   const payroll=csv(get('payroll-register.csv')), reported=parseApplication(get('application.md'));
   const ids=new Set(payroll.map(r=>r.employee_id));
   if(ids.size!==payroll.length || ids.size!==Object.keys(review.duties).length)throw Error('Employee review/register mismatch');
   const rows=name=>documents[name]?csv(documents[name]):[];
   const sites=rows('site-signin-log.csv'),times=rows('crew-timesheets.csv'),routes=rows('route-log.csv');
   for(const r of [...sites,...times,...routes])checkDate(r.date,start,end);
-  for(const r of times)if(!ids.has(r.employee_id)||!['roofing','siding','gutters'].includes(r.work_type)||!(Number(r.hours)>0))throw Error('Unreviewed or invalid timesheet');
-  const allocations=[],questions=[],issues=[...(review.openItems||[])],metrics={};
+  for(const r of times)if(!['roofing','siding','gutters'].includes(r.work_type)||!Number.isFinite(Number(r.hours))||!(Number(r.hours)>0))throw Error('Invalid timesheet work or hours');
+  const allocations=[],questions=[],issues=[...(review.openItems||[]),...unmatchedLogIds(sites,routes,times,ids,review.visitors)],metrics={};
   const q = text=>questions.push(text);
   for(const name of Object.keys(documents).sort())q(`Confirm the completeness, audit-period applicability and accuracy of ${name}, including all employees/payments or entries recorded in it; this source supports the decisions below.`);
-  q('Confirm the owner inclusion/exclusion statements in business-description.md and provide the filed election for each owner stated to be excluded (CG-05).');
-  let catering=false;
-  if(documents['gross-receipts.csv']) {
-    const receipts=rows('gross-receipts.csv');
-    if(new Set(receipts.map(r=>r.month)).size!==receipts.length)throw Error('Duplicate receipt month');
-    const off=sum(receipts.map(r=>cents(r.offsite_catering_receipts))),total=off+sum(receipts.map(r=>cents(r.dine_in_receipts)));
-    if(!total)throw Error('Zero gross receipts');
-    catering=off*100>=total*40;
-    metrics.catering=`Off-site receipts $${usd(off)} / total $${usd(total)} = ${(off/total*100).toFixed(4)}%; the interview threshold is 40%.`;
-    const first=receipts.map(r=>r.month).sort()[0],last=receipts.map(r=>r.month).sort().at(-1);
-    issues.push(`PROVISIONAL: gross-receipts.csv covers ${first} through ${last}, not the exact ${start} through ${end} audit dates. Use the supplied sales summary provisionally; obtain period-aligned receipts before sign-off.`);
-    q(`Confirm gross-receipts.csv totals and whether its ${first}–${last} reporting window is the approved basis for the 40% catering threshold; provide receipts aligned to ${start}–${end}.`);
+  const ownerStatements=get('business-description.md').replace(/\s+/g,' ').match(/[^.!?]*election of exclusion[^.!?]*[.!?]/g)||[];
+  q(`Confirm owner status for ${start} through ${end} (CG-05). ${ownerStatements.map(s=>`business-description.md states: "${s.trim()}"`).join(' ')} Provide the filed election and its effective dates for each excluded owner, or confirm inclusion and actual duties; reconcile each named owner to payroll-register.csv. A statement is not the original election document.`);
+  let catering=null;
+  if(receiptEvidence) {
+    catering=receiptEvidence.met;
+    if(catering===null) {
+      issues.push(receiptEvidence.problem);metrics.catering=receiptEvidence.problem;
+      if(!Object.values(review.duties).some(d=>d.work==='catering'))q(`For ${payroll.map(p=>`${p.name} (${p.employee_id})`).join(', ')}, reconcile employee duties with catering operations in business-description.md, field-notes.md and application.md. Provide complete gross-receipts.csv and confirm its reporting window before publication; the 40% threshold is unknown. Existing duty labels do not establish whether catering duties are missing. Do not infer or change any employee's allocation without reviewed actual-duty evidence.`);
+    } else {
+      const {off,total,first,last}=receiptEvidence;
+      metrics.catering=`Off-site receipts $${usd(off)} / total $${usd(total)} = ${(off/total*100).toFixed(4)}%; the interview threshold is 40%.`;
+      issues.push(`PROVISIONAL: gross-receipts.csv covers ${first} through ${last}, not the exact ${start} through ${end} audit dates. Use the supplied sales summary provisionally; obtain period-aligned receipts before sign-off.`);
+      q(`Confirm gross-receipts.csv totals and whether its ${first}–${last} reporting window is the approved basis for the 40% catering threshold; provide receipts aligned to ${start}–${end}.`);
+    }
   }
   for(const p of payroll) {
     const fact=review.duties[p.employee_id]; if(!fact||!fact.basis)throw Error(`Unreviewed actual duties: ${p.employee_id}`);
-    let code,reason=fact.basis, amount=cents(p.wages_paid);
+    let code,reason=fact.basis, amount=cents(p.wages_paid),unresolved=false;
     const days=dayCount(sites,p.employee_id);
+    const describeDates=records=>{
+      const dates=[...new Set(records.map(r=>r.date))].sort();
+      return dates.length<=15?dates.join(', '):`${dates[0]} through ${dates.at(-1)} (${dates.length} distinct dates; obtain the complete dated duty-time record)`;
+    };
+    if(days)q(`For ${p.name} (${p.employee_id}), reconcile site-signin-log.csv dates ${describeDates(sites.filter(r=>r.employee_id===p.employee_id))} with field-notes.md and actual duties. Identify which entries are actual job-site attendance versus court, closings or other visits, and provide corrections/supporting attendance records. Interview 11:00 permits C-110 through four established job-site days and whole-pay transfer at five; do not infer a field code where none is established.`);
     switch(fact.work) {
       case 'office': code='C-110';
         if(days>=5) {
@@ -96,6 +174,7 @@ export function classify({slug,documents,review,guide}) {
       case 'roof-siding': {
         const own=times.filter(r=>r.employee_id===p.employee_id);if(!own.length)throw Error(`Missing crew time for ${p.name}`);
         const roof=dayCount(own,p.employee_id,'roofing');code=roofCode(roof);
+        q(`For ${p.name} (${p.employee_id}), confirm ${roof} distinct roofing dates in crew-timesheets.csv: ${describeDates(own.filter(r=>r.work_type==='roofing'))||'[none]'}. Reconcile actual installation work with application.md and field-notes.md; provide missing/corrected dated time records. Interview 10:57 requires whole payroll under R-310 at 15 or more roof days, otherwise R-320, without splitting.`);
         reason+=`; ${roof} distinct roofing dates in crew-timesheets.csv; interview 10:57 requires whole payroll at the 15-day threshold, without splitting.`;break;
       }
       case 'residential': code='H-420';break;
@@ -106,25 +185,27 @@ export function classify({slug,documents,review,guide}) {
       case 'parking': code='G-950';break;
       case 'home-health': code='N-910';break;
       case 'restaurant': code='F-710';break;
-      case 'catering': code=catering?'F-720':'F-710';reason+=`; ${metrics.catering} Interview 10:58 limits F-720 to employers meeting the threshold.`;break;
+      case 'catering':
+        unresolved=catering===null;code=unresolved?null:catering?'F-720':'F-710';
+        reason+=`; ${metrics.catering} ${unresolved?'Neither F-710 nor F-720 is established for this catering allocation.':'Interview 10:58 limits F-720 to employers meeting the threshold.'}`;break;
       default:throw Error(`Unsupported duties ${fact.work}; obtain reviewed classification, do not guess`);
     }
     const ride=new Set(routes.filter(r=>r.ride_along_id===p.employee_id).map(r=>r.date)).size;
-    if(ride) {
+    if(ride && !unresolved) {
       code='T-610';reason+=`; route-log.csv records ${ride} ride-along dates; CG-31 describes vehicle helpers.`;
       issues.push(`PROVISIONAL: ${p.name}: propose whole-pay T-610 ($${usd(amount)}) for documented vehicle-helper duties. CG-07 permits division using time records, but route days do not establish hours or exact pay attributable to each duty. This is a proposed treatment, not an established company rule; even infrequent rides require clarification. No assumed day fractions or invented weekly rule are used; obtain time records and auditor approval.`);
-      q(`For ${p.name}, confirm ${ride} ride-along dates in route-log.csv, reconcile the application statement, and approve provisional whole-pay T-610 $${usd(amount)} or provide duty hours to divide payroll under CG-07. Confirm weekly-payroll.csv against payroll-register.csv.`);
+      q(`For ${p.name} (${p.employee_id}), confirm ${ride} ride-along dates in route-log.csv: ${describeDates(routes.filter(r=>r.ride_along_id===p.employee_id))}. Reconcile application.md with field-notes.md and confirm whether the rides were vehicle-helper work. Obtain auditor direction on provisional whole-pay T-610 $${usd(amount)}; provide dated hours by dispatch/helper duty and the associated pay periods for possible CG-07 division. Confirm weekly-payroll.csv against payroll-register.csv; neither route days, weekly gross nor an application time estimate establishes duty hours or a weekly classification rule.`);
     }
     if(p.travel_allowance_paid!==undefined) {
       if(!/^\d+$/.test(p.travel_days))throw Error('Invalid travel days');
       const paid=cents(p.travel_allowance_paid),included=travelIncluded(paid,Number(p.travel_days));amount+=included;
       if(paid) {
         reason+=`; travel allowance $${usd(paid)}, ${p.travel_days} travel days, $${usd(paid-included)} excluded and $${usd(included)} included above $47/day (CG-03; interview 11:00).`;
-        q(`For ${p.name}, confirm wages $${p.wages_paid}, ${p.travel_days} travel days and allowance $${usd(paid)} in payroll-register.csv; confirm allowance is additional to wages and the proposed exclusion $${usd(paid-included)} / inclusion $${usd(included)}. Supply travel or expense evidence (CG-03).`);
+        q(`For ${p.name} (${p.employee_id}), confirm wages $${p.wages_paid}, ${p.travel_days} travel days and allowance $${usd(paid)} in payroll-register.csv; confirm allowance is additional to wages and the proposed exclusion $${usd(paid-included)} / inclusion $${usd(included)}. Provide payment dates, dated out-of-town attendance and travel/expense receipts for ${start} through ${end} (CG-03; interview 11:00). ${Number(p.travel_days)?'Reconcile the documented daily payments with the $47/person/day cap.':'The register supplies zero travel days: identify the payment purpose and missing day/expense evidence before approving an exclusion; full inclusion remains provisional.'}`);
         if(!Number(p.travel_days))issues.push(`OPEN: ${p.name} has allowance $${usd(paid)} but zero travel days. Provisionally include the entire allowance; no supported daily exclusion exists. Obtain the payment purpose and expense receipts.`);
       }
     }
-    allocations.push({id:p.employee_id,name:p.name,code,amount,base:cents(p.wages_paid),reason,days});
+    allocations.push({id:p.employee_id,name:p.name,code,amount,base:cents(p.wages_paid),reason,days,unresolved});
   }
   if(documents['weekly-payroll.csv']) {
     const weeks=rows('weekly-payroll.csv'), seen=new Set();
@@ -140,37 +221,41 @@ export function classify({slug,documents,review,guide}) {
     const paid=cents(pay.amount_paid),included=cert?0:Math.round(paid*60/100);
     const detail=`${pay.subcontractor}, invoice ${pay.invoice}, ${pay.date}, ${pay.work}, paid $${usd(paid)}: ${cert?'full-period certificate '+cert.certificate_no:'no demonstrated certificate for the WHOLE audit period'}; include $${usd(included)} under ${code} (CG-06, interview 10:56/10:59, 60% per payment rounded half-up to cents).`;
     allocations.push({id:pay.invoice,name:pay.subcontractor,code,amount:included,base:0,reason:detail,subcontractor:true});
-    q(`Confirm ${detail} Provide original policy certificates, renewals and entity identity where names differ.`);
+    const listed=rows('insurance-certificates.csv').filter(c=>c.subcontractor===canonical);
+    q(`Confirm ${detail} Evidence: subcontractor-payments.csv and insurance-certificates.csv. ${listed.length?listed.map(c=>`Listed ${c.subcontractor}, certificate ${c.certificate_no}, ${c.coverage_from} through ${c.coverage_to}.`).join(' '):`No certificate is listed for ${canonical}.`} Provide original certificates and any missing renewals proving coverage for ${start} through ${end}, not only the payment date.${canonical!==pay.subcontractor?` Confirm that payment name ${pay.subcontractor} and certificate name ${canonical} are the same legal entity; supply identity evidence.`:''} Confirm the per-payment cent-rounding convention with the auditor.`);
     if(!cert)issues.push(`OPEN: ${detail} The addition is provisional pending complete coverage evidence; a later payment date does not override Nadia's whole-period test.`);
   }
   const direct={}; for(const a of allocations)if(a.code && a.code!=='C-110')direct[a.code]=(direct[a.code]||0)+a.amount;
   const ranked=Object.entries(direct).sort((a,b)=>b[1]-a[1]);
-  if(allocations.some(a=>!a.code)) {
+  if(allocations.some(a=>!a.code && !a.unresolved)) {
     if(!ranked.length || (ranked[1]&&ranked[0][1]===ranked[1][1]))throw Error('Governing field code unresolved; no unique largest payroll');
-    for(const a of allocations.filter(a=>!a.code)){a.code=ranked[0][0];a.reason+=`; whole payroll moves to ${a.code}, the largest field-payroll class ($${usd(ranked[0][1])}, including assessable subcontractors) before office transfers, per interview 11:00–11:01.`;}
+    for(const a of allocations.filter(a=>!a.code && !a.unresolved)){a.code=ranked[0][0];a.reason+=`; whole payroll moves to ${a.code}, the largest field-payroll class ($${usd(ranked[0][1])}, including assessable subcontractors) before office transfers, per interview 11:00–11:01.`;}
   }
-  for(const a of allocations.filter(a=>!a.subcontractor))q(`Confirm ${a.name} (${a.id}) actual duties and allocated payroll $${usd(a.amount)} under ${a.code}: ${a.reason}`);
+  for(const a of allocations.filter(a=>!a.subcontractor))q(a.unresolved?
+    `For ${a.name} (${a.id}), provide complete gross-receipts.csv and confirm its reporting window before classifying $${usd(a.amount)} of catering payroll. The 40% threshold is unknown; neither F-710 nor F-720 has been established.`:
+    `Confirm ${a.name} (${a.id}) actual duties and allocated payroll $${usd(a.amount)} under ${a.code}: ${a.reason}`);
   for(const issue of issues)q(`Resolve and confirm: ${issue}`);
-  const totals={};for(const a of allocations){if(!guide[a.code])throw Error(`Code missing from live guide: ${a.code}`);totals[a.code]=(totals[a.code]||0)+a.amount;}
+  const totals={};for(const a of allocations){if(a.unresolved)continue;if(!guide[a.code])throw Error(`Code missing from live guide: ${a.code}`);totals[a.code]=(totals[a.code]||0)+a.amount;}
   for(const code of Object.keys(totals))if(!totals[code])delete totals[code];
-  const base=sum(payroll.map(p=>cents(p.wages_paid))),total=sum(Object.values(totals)),addition=total-base;
+  const unallocated=sum(allocations.filter(a=>a.unresolved).map(a=>a.amount));
+  const base=sum(payroll.map(p=>cents(p.wages_paid))),total=sum(Object.values(totals))+unallocated,addition=total-base;
   const delta=Object.fromEntries([...new Set([...Object.keys(totals),...Object.keys(reported)])].sort().map(c=>[c,(totals[c]||0)-(reported[c]||0)]));
-  const accept=Object.values(delta).every(n=>n===0);
+  const accept=!allocations.some(a=>a.unresolved) && Object.values(delta).every(n=>n===0);
   const exposure=(sum(Object.values(delta).map(Math.abs))-Math.abs(total-sum(Object.values(reported))))/2+Math.abs(addition);
-  return {slug,title:get('business-description.md').split('\n')[0].replace(/^# /,'').replace(/: business description$/,''),start,end,reported,totals,delta,base,total,addition,allocations,questions,issues,metrics,accept,exposure,review};
+  return {slug,title:get('business-description.md').split('\n')[0].replace(/^# /,'').replace(/: business description$/,''),start,end,reported,totals,delta,base,total,addition,allocations,questions,issues,metrics,accept,exposure,review,unallocated,receiptEvidenceUnknown:receiptEvidence?.met===null};
 }
 
 export async function download(file) {
   const response=await fetch(`https://drive.google.com/uc?export=download&id=${encodeURIComponent(file.id)}`,{signal:AbortSignal.timeout(60000)});
   if(!response.ok)throw Error(`${file.name||file.title}: HTTP ${response.status}`);
   const text=await response.text();
-  if(!text.trim() || /^\s*<!doctype html|^\s*<html/i.test(text))throw Error('Drive returned HTML or empty content; use connected Drive refresh, never audit a login page');
+  if((!text.trim() && file.name!=='gross-receipts.csv') || /^\s*<!doctype html|^\s*<html/i.test(text))throw Error('Drive returned HTML or empty content; use connected Drive refresh, never audit a login page');
   return text;
 }
 async function readJson(p){return JSON.parse(await fs.readFile(p,'utf8'));}
 function section(result,guide,kind) {
   const r=result,lines=[`## ${r.title}`,''];
-  if(kind==='questions')return lines.concat(r.questions.map((q,i)=>`${i+1}. ${q}`),'').join('\n');
+  if(kind==='questions')return lines.concat(r.questions.map((q,i)=>`${i+1}. ${q}`),'','### Evidence references','',...Object.entries(r.sourceInfo||{}).map(([name,info])=>`- [${name}](${info.url}) — SHA-256 ${info.sha256}.`),'').join('\n');
   lines.push(`**${r.accept?'Accept the reported amounts provisionally':'Do not accept the employer’s reported split'}**. My decision rests on the actual-duty review of business-description.md and field-notes.md, payroll-register.csv and the supporting records listed below. ${r.issues.length?'Open items prevent final sign-off.':'Subject to employer confirmation of the listed evidence.'}`,'',`Audit period ${r.start}–${r.end}. Recorded employee wages $${usd(r.base)}; added assessable remuneration $${usd(r.addition)}; proposed allocated payroll $${usd(r.total)}.`,'','| Code | Reported USD | Proposed USD | Difference USD | Code paragraph |','|---|---:|---:|---:|---|');
   for(const c of Object.keys(r.delta))lines.push(`| ${c} | ${usd(r.reported[c]||0)} | ${usd(r.totals[c]||0)} | ${usd(r.delta[c])} | ${guide[c]?.ref||'unrecognized'} |`);
   lines.push('','The application gives aggregate class totals, not a named employee-to-code mapping. The following records-based allocations identify each employee/payment; do not interpret an inferred original class as an employer-confirmed fact.','', '### Employee and payment decisions','');
@@ -196,12 +281,25 @@ export async function run({manifestPath=path.join(skillDir,'references/sources.j
   const results=[];
   for(const e of selected){
     const review=await readJson(path.resolve(path.dirname(manifestPath),e.review));
-    const entries=await Promise.all(e.files.map(async f=>[f.name,bundle?bundle.documents.find(d=>d.folder===e.slug&&d.title===f.name)?.content:await download(f)]));
+    const entries=await Promise.all(e.files.map(async f=>{
+      try {return [f.name,bundle?bundle.documents.find(d=>d.folder===e.slug&&d.title===f.name)?.content:await download(f)];}
+      catch(error) {
+        if(f.name!=='gross-receipts.csv')throw error;
+        // A failed receipt read is no evidence of sales, and must not pick a class.
+        return [f.name,undefined];
+      }
+    }));
     const documents=Object.fromEntries(entries);
     const r=classify({slug:e.slug,documents,review,guide});
-    r.sourceInfo=Object.fromEntries(e.files.map(f=>[f.name,{url:f.url,sha256:sha(documents[f.name])}]));results.push(r);
+    r.sourceInfo=Object.fromEntries(e.files.map(f=>[f.name,{url:f.url,sha256:typeof documents[f.name]==='string'?sha(documents[f.name]):null}]));results.push(r);
   }
   // Fetch and validate the complete selection before writing outputs.
+  const unresolved=results.filter(r=>r.receiptEvidenceUnknown||r.allocations.some(a=>a.unresolved));
+  if(unresolved.length) {
+    const questions=unresolved.flatMap(r=>r.questions.filter(q=>q.includes('gross-receipts.csv')).map(q=>`${r.title}: ${q}`));
+    const error=new Error(`Unresolved payroll or required catering evidence: no outputs published. Resolve the following employer questions:\n${questions.join('\n')}`);
+    error.questions=questions;error.results=unresolved;throw error;
+  }
   await fs.mkdir(path.join(out,'codes'),{recursive:true});
   for(const r of results) {
     const text='class_code,payroll_allocated,rationale_ref\n'+Object.keys(r.totals).sort().map(c=>`${c},${usd(r.totals[c])},${guide[c].ref}`).join('\n')+'\n';

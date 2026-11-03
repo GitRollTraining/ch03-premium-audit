@@ -1,5 +1,10 @@
 {
   "fieldBusiness": false,
+  "receiptWindow": {
+    "startMonth": "2025-07",
+    "endMonth": "2026-06",
+    "basis": "gross-receipts.csv supplies twelve monthly sales-summary rows from July 2025 through June 2026; field-notes.md identifies this as the owner's monthly sales summary. This describes the supplied reporting window, not approval of its alignment with the audit period; that remains an open employer question."
+  },
   "duties": {
     "LL-E01": {
       "work": "restaurant",

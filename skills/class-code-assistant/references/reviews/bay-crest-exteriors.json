@@ -1,5 +1,14 @@
 {
   "fieldBusiness": true,
+  "visitors": [
+    {
+      "source": "site-signin-log.csv",
+      "field": "employee_id",
+      "id": "",
+      "name": "County inspector",
+      "basis": "site-signin-log.csv explicitly labels the anonymous-ID entry on 2025-10-09 as County inspector, a documented visitor rather than a payroll employee."
+    }
+  ],
   "duties": {
     "BC-E01": {
       "work": "roof-siding",
